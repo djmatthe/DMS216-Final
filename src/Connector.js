@@ -4,8 +4,8 @@ import App from "./App"
 
 
 const mqttConnectionOptions = {
-  port: 1883,
-  host: 'drewwilliams.dev',
+  port: 8083,
+  host: 'mqtt.drewwilliams.dev',
   clientId: 'tehe2',
   username: 'drew',
   password: 'dms216'
