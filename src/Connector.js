@@ -5,7 +5,8 @@ import App from "./App"
 
 const mqttConnectionOptions = {
   port: 8083,
-  host: 'wss://mqtt.drewwilliams.dev',
+  protocol: 'wss',
+  host: 'mqtt.drewwilliams.dev',
   clientId: 'tehe2',
   username: 'drew',
   password: 'dms216'
