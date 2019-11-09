@@ -4,7 +4,7 @@ import OutTopic from "./components/OutTopic"
 const App = () => {
   return (
     <Fragment>
-      <div>Let's get her done fellas</div>
+      <div>Let's get her done fellas :D</div>
       <OutTopic/>
     </Fragment>
   );
