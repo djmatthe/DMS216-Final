@@ -19,6 +19,7 @@
 #include <ESP8266WiFi.h>
 #include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_Client.h"
+#include <ArduinoJson.h>
 
 /************************* WiFi Access Point *********************************/
 
@@ -51,10 +52,24 @@ static const char *fingerprint PROGMEM = "5E 5A 01 E5 59 B7 FC DB F5 90 D4 A2 EE
 // Setup a feed called 'test' for publishing.
 // Notice MQTT paths for AIO follow the form: <username>/feeds/<feedname>
 Adafruit_MQTT_Publish test = Adafruit_MQTT_Publish(&mqtt, "outTopic");
+Adafruit_MQTT_Publish buttonPub = Adafruit_MQTT_Publish(&mqtt, "buttonState");
+
+/*************************** PINS ************************************/
+
+#define BTN_PIN 14
+
+/*************************** Variables ************************************/
+
+bool buttonState = false;
+bool lastButtonState = false;
+bool buttonStateToSend = false;
 
 /*************************** Sketch Code ************************************/
 
 void setup() {
+  pinMode(BTN_PIN, INPUT);
+
+
   Serial.begin(115200);
   delay(10);
 
@@ -81,6 +96,33 @@ void setup() {
 
   // check the fingerprint of io.adafruit.com's SSL cert
   client.setFingerprint(fingerprint);
+  
+}
+
+void sendButtonPress() {
+  char outputBuffer[128];
+  bool buttonState = digitalRead(BTN_PIN);
+
+  if(buttonState != lastButtonState) {
+    if(buttonState == HIGH) {
+      buttonStateToSend = true;
+
+    }
+    else {
+      buttonStateToSend = false;
+    }
+    delay(50);
+  }
+
+  lastButtonState = buttonState;
+
+  StaticJsonDocument<200> doc;
+
+  doc["buttonState"] = buttonStateToSend;
+
+  serializeJson(doc, outputBuffer);
+
+  test.publish(outputBuffer);
 }
 
 uint32_t x=0;
@@ -91,18 +133,20 @@ void loop() {
   // function definition further below.
   MQTT_connect();
 
+  sendButtonPress();
+
   // Now we can publish stuff!
-  Serial.print(F("\nSending val "));
+  /*Serial.print(F("\nSending val "));
   Serial.print(x);
   Serial.print(F(" to test feed..."));
   if (! test.publish(x++)) {
     Serial.println(F("Failed"));
   } else {
     Serial.println(F("OK!"));
-  }
+  }*/
 
   // wait a couple seconds to avoid rate limit
-  delay(2000);
+  //delay(2000);
 
 }
 
