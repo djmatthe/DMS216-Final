@@ -1,11 +1,11 @@
 import React, { Fragment } from 'react';
 import OutTopic from "./components/OutTopic"
+import { Lobby } from "./pages"
 
-const App = () => {
+const App = props => {
   return (
     <Fragment>
-      <div>Let's get her done fellas :D</div>
-      <OutTopic/>
+      <Lobby/>
     </Fragment>
   );
 }
