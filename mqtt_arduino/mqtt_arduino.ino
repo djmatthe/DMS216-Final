@@ -20,6 +20,7 @@
 #include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_Client.h"
 #include <ArduinoJson.h>
+#include "Adafruit_NeoPixel.h"
 
 /************************* WiFi Access Point *********************************/
 
@@ -53,18 +54,37 @@ static const char *fingerprint PROGMEM = "5E 5A 01 E5 59 B7 FC DB F5 90 D4 A2 EE
 // Notice MQTT paths for AIO follow the form: <username>/feeds/<feedname>
 Adafruit_MQTT_Publish test = Adafruit_MQTT_Publish(&mqtt, "outTopic");
 Adafruit_MQTT_Publish buttonPub = Adafruit_MQTT_Publish(&mqtt, "buttonState");
+Adafruit_MQTT_Subscribe ledSub = Adafruit_MQTT_Subscribe(&mqtt, "ledState");
+
 
 /*************************** PINS ************************************/
 
+#define NEO_PIXEL_DATA 12
 #define BTN_PIN 14
+#define NUM_OF_PIXELS 1
 
 /*************************** Variables ************************************/
+
+Adafruit_NeoPixel strip(NUM_OF_PIXELS, NEO_PIXEL_DATA, NEO_GRB + NEO_KHZ800);
 
 bool buttonState = false;
 bool lastButtonState = false;
 bool buttonStateToSend = false;
 
 /*************************** Sketch Code ************************************/
+
+void ledCallback(int mode) {
+  switch(mode) {
+    case 0:
+      strip.setPixelColor(0, 0, 0, 0);
+      break;
+    case 1:
+      strip.setPixelColor(0, 255, 255, 255);
+    case 2:
+      strip.setPixelColor(0, 255, 0, 0);
+  }
+  strip.show();
+}
 
 void setup() {
   pinMode(BTN_PIN, INPUT);
@@ -96,7 +116,13 @@ void setup() {
 
   // check the fingerprint of io.adafruit.com's SSL cert
   client.setFingerprint(fingerprint);
+
+  ledSub.setCallback(ledCallback);
   
+  mqtt.subscribe(ledSub);
+  
+  strip.begin();
+  strip.show(); // Initialize all pixels to 'off'
 }
 
 void sendButtonPress() {
@@ -124,6 +150,7 @@ void sendButtonPress() {
 
   test.publish(outputBuffer);
 }
+
 
 uint32_t x=0;
 
