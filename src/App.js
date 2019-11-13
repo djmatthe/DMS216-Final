@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
-import OutTopic from "./components/OutTopic"
 import { Lobby } from "./pages"
-import "./public/index.css"
+import "./index.css"
 
 const App = props => {
   return (
