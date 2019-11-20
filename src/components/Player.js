@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components'
 import { Typography } from '.'
+import { subscribe } from 'mqtt-react'; 
 
 const PlayerWrapper = styled.div`
   margin: 20px;
@@ -20,35 +21,25 @@ const LabelWrapper = styled.div`
   justify-content: center;
 `
 
-class Player extends Component {
 
-  constructor(props){
-    super(props)
-    this.state = {activated : false}
+
+const Player = props => { 
+
+  const _onClick = () => {
+    const { mqtt } = props;
+    mqtt.publish(`Player${props.playerNum}`, 'start');
+    console.log("should have published")
   }
 
-  activate = () => {
-    this.setState({activated: !this.state.activated})
-  }
-
-  render(){
-    console.log(this.props.data)
-    let active = false;
-    if(this.props.data[0]){
-      active = this.props.data[0].toString() === "Start"
-    }
-
-    return (
-      <PlayerWrapper activated={active} color={this.props.color}>
-        <LabelWrapper>
-          <Typography size={40} color='white'>
-            {`P${this.props.playerNum}`}
-          </Typography>
-        </LabelWrapper>
-
-      </PlayerWrapper>
-    );
-  }
+  return (
+    <PlayerWrapper activated={props.active} color={props.color} onClick={_onClick}>
+      <LabelWrapper>
+        <Typography size={40} color='white'>
+          {`P${props.playerNum}`}
+        </Typography>
+      </LabelWrapper>
+    </PlayerWrapper>
+  );
 }
 
 export default Player
