@@ -7,6 +7,7 @@ const Title = styled.div`
   font-size: ${({size}) => size}px;
   color: ${({color}) => color};
   margin: auto;
+  text-align: center;
 `
 
 const Typography = ({children, size, color}) => {

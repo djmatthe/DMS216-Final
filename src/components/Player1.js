@@ -20,26 +20,28 @@ const LabelWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
 `
+let recentMessage = null
+const onMessage = (topic, message) => {
+  recentMessage = message.toString()
+}
 
 
 
-const Player = props => { 
+const Player = () => {
+  const {color, playerNum} = this.props
 
-  const _onClick = () => {
-    const { mqtt } = props;
-    mqtt.publish(`Player${props.playerNum}`, 'start');
-    console.log("should have published")
-  }
+  let active = false
+  if(recentMessage === 'start') active = true
 
   return (
-    <PlayerWrapper activated={props.active} color={props.color} onClick={_onClick}>
+    <PlayerWrapper activated={active} color={color}>
       <LabelWrapper>
         <Typography size={40} color='white'>
-          {`P${props.playerNum}`}
+          {`P${playerNum}`}
         </Typography>
       </LabelWrapper>
     </PlayerWrapper>
   );
 }
 
-export default Player
+export default subscribe({topic: 'Player1', dispatch: onMessage})(Player)
