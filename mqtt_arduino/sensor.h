@@ -1,15 +1,17 @@
 #include <Adafruit_NeoPixel.h>
 #include <IRremoteESP8266.h>
 #include <IRrecv.h>
+#include <IRsend.h>
 #include <IRutils.h>
 
 //PINS
 #define NEO_PIXEL_PIN 14
 #define BUTTON_PIN 12
 #define IR_SENSOR_PIN 13
-#define TILT_SENSOR_PIN 4
+#define TILT_SENSOR_PIN 15
 #define BUZZER_PIN 5
 #define SPEAKER_PIN 17
+#define IR_BLASTER_PIN 4
 
 //CONSTANTS
 #define LED_COUNT 1
@@ -22,6 +24,7 @@ unsigned long debounceDelay = 50;
 //DEVICE VARIABLES
 Adafruit_NeoPixel neoPixel(LED_COUNT, NEO_PIXEL_PIN, NEO_GRB + NEO_KHZ800);
 IRrecv reciever(IR_SENSOR_PIN);
+IRsend ir_sender(IR_BLASTER_PIN);
 decode_results reciever_results;
 
 //STATE VARIABLES
@@ -115,6 +118,18 @@ void setPixelPattern(int pattern) {
   neoPixel.show();
 }
 
+void sendIRData(uint16_t code) {
+  uint16_t rawData[67] = {9000, 4500, 650, 550, 650, 1650, 600, 550, 650, 550,
+                        600, 1650, 650, 550, 600, 1650, 650, 1650, 650, 1650,
+                        600, 550, 650, 1650, 650, 1650, 650, 550, 600, 1650,
+                        650, 1650, 650, 550, 650, 550, 650, 1650, 650, 550,
+                        650, 550, 650, 550, 600, 550, 650, 550, 650, 550,
+                        650, 1650, 600, 550, 650, 1650, 650, 1650, 650, 1650,
+                        650, 1650, 650, 1650, 650, 1650, 600};
+  ir_sender.sendRaw(rawData, 67, 38);
+  delay(2000);
+}
+
 void readIRSensor() {
   if(reciever.decode(&reciever_results)) {
     serialPrintUint64(reciever_results.value, HEX);
@@ -140,6 +155,7 @@ void setupSensors() {
   pinMode(IR_SENSOR_PIN, INPUT);
   pinMode(TILT_SENSOR_PIN, INPUT);
   pinMode(BUZZER_PIN, OUTPUT);
+  pinMode(IR_BLASTER_PIN, OUTPUT);
 
   neoPixel.setBrightness(NEO_PIXEL_BRIGHTNESS);
   neoPixel.begin();
@@ -147,6 +163,7 @@ void setupSensors() {
 
   setPixelPattern(0);
 
+  ir_sender.begin();
   reciever.enableIRIn();
 
   Serial.println("Setup sensors done.");

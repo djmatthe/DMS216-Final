@@ -35,11 +35,22 @@ static const char *fingerprint PROGMEM = "5E 5A 01 E5 59 B7 FC DB F5 90 D4 A2 EE
 // Setup a feed called 'test' for publishing.
 // Notice MQTT paths for AIO follow the form: <username>/feeds/<feedname>
 Adafruit_MQTT_Publish test = Adafruit_MQTT_Publish(&mqtt, "Player1");
-Adafruit_MQTT_Publish buttonPub = Adafruit_MQTT_Publish(&mqtt, "buttonState");
-Adafruit_MQTT_Subscribe ledSub = Adafruit_MQTT_Subscribe(&mqtt, "ledState");
-
+Adafruit_MQTT_Subscribe ledSub = Adafruit_MQTT_Subscribe(&mqtt, "Player1/ledState");
+Adafruit_MQTT_Subscribe irSendSub = Adafruit_MQTT_Subscribe(&mqtt, "Player1/irState");
 
 /*************************** Sketch Code ************************************/
+
+void ledCallback(uint32_t pattern) {
+  Serial.println("Got pattern");
+  Serial.println(pattern);
+  setPixelPattern(pattern);
+}
+
+void irCallback(uint32_t code) {
+  Serial.println("Got ir code");
+  Serial.println(code);
+  sendIRData(code);
+}
 
 void setup() {
   Serial.begin(115200);
@@ -67,6 +78,12 @@ void setup() {
   Serial.println("IP address: "); Serial.println(WiFi.localIP());
 
   client.setFingerprint(fingerprint);
+
+  ledSub.setCallback(ledCallback);
+  irSendSub.setCallback(irCallback);
+
+  mqtt.subscribe(&ledSub);
+  mqtt.subscribe(&irSendSub);
 }
 
 void sendButtonPress() {
@@ -82,8 +99,12 @@ void sendButtonPress() {
 void loop() {
   MQTT_connect();
   sensorLoop();
-  setPixelPattern(1);
   sendButtonPress();
+  
+  mqtt.processPackets(10000);
+  if(!mqtt.ping()) {
+    mqtt.disconnect();
+  }
 }
 
 void MQTT_connect() {
