@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "mqtt": "^3.0.0",
-    "mqtt-react": "^0.0.3",
     "object.omit": "^3.0.0",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",

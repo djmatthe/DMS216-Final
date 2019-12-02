@@ -3,9 +3,10 @@ import { Lobby } from "./pages"
 import "./index.css"
 
 const App = props => {
+
   return (
     <Fragment>
-      <Lobby/>
+      <Lobby />
     </Fragment>
   );
 }
