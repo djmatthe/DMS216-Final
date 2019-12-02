@@ -4,6 +4,11 @@
 #include <ArduinoJson.h>
 #include "sensor.h"
 
+#define PLAYER_NUM "Player4"
+
+#define LED_STATE_STR PLAYER_NUM "/ledState"
+#define IR_STATE_STR PLAYER_NUM "/irState"
+
 /************************* WiFi Access Point *********************************/
 
 #define WLAN_SSID       "UB_Connect"
@@ -34,9 +39,9 @@ static const char *fingerprint PROGMEM = "5E 5A 01 E5 59 B7 FC DB F5 90 D4 A2 EE
 
 // Setup a feed called 'test' for publishing.
 // Notice MQTT paths for AIO follow the form: <username>/feeds/<feedname>
-Adafruit_MQTT_Publish test = Adafruit_MQTT_Publish(&mqtt, "Player1");
-Adafruit_MQTT_Subscribe ledSub = Adafruit_MQTT_Subscribe(&mqtt, "Player1/ledState");
-Adafruit_MQTT_Subscribe irSendSub = Adafruit_MQTT_Subscribe(&mqtt, "Player1/irState");
+Adafruit_MQTT_Publish test = Adafruit_MQTT_Publish(&mqtt, PLAYER_NUM);
+Adafruit_MQTT_Subscribe ledSub = Adafruit_MQTT_Subscribe(&mqtt, LED_STATE_STR);
+Adafruit_MQTT_Subscribe irSendSub = Adafruit_MQTT_Subscribe(&mqtt, IR_STATE_STR);
 
 /*************************** Sketch Code ************************************/
 
