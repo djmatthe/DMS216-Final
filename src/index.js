@@ -1,9 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Connector from './Connector';
+import App from './App'
+import mqtt from 'mqtt'
 import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(<Connector />, document.getElementById('root'));
+
+const connectionOptions = {
+    port: 8083,
+    protocol: 'wss',
+    host: 'mqtt.drewwilliams.dev',
+    clientId: 'tehe2',
+    username: 'drew',
+    password: 'dms216'
+}
+
+export const client = mqtt.connect(connectionOptions)
+
+client.on('connect', () => {
+    ReactDOM.render(<App/>, document.getElementById('root'));
+})
+
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

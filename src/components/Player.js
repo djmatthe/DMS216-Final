@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import styled from 'styled-components'
 import { Typography } from '.'
+import { client } from '../index'
+import { listenToTopic } from '../helpers'
 
 const PlayerWrapper = styled.div`
-  margin: 20px;
+  margin: 2vw;
   height: 20vw;
   width: 20vw;
   border-radius: 50%;
   background-color: ${({color}) => color};
-  opacity: ${({activated}) => activated ? 1 : .4};
+  opacity: ${({activated}) => activated ? 1 : .1};
 
   transition: all .3s ease;
 `
@@ -24,28 +26,32 @@ class Player extends Component {
 
   constructor(props){
     super(props)
-    this.state = {activated : false}
+    this.state = { active: false, messages: [] }
+
+    client.subscribe(`Player${this.props.playerNum}`, err => err && console.log(err))
+    client.on('message', listenToTopic(`Player${this.props.playerNum}`, this.onMessage))
   }
 
-  activate = () => {
-    this.setState({activated: !this.state.activated})
+  componentWillUnmount = () => {
+    client.unsubscribe(`Player${this.props.playerNum}`, err => err && console.log(err))
+  }
+
+  onMessage = message => {
+    this.setState({messages: [message, ...this.state.messages], })
+    if(message === "start"){
+      this.setState({active: true})
+    }
   }
 
   render(){
-    console.log(this.props.data)
-    let active = false;
-    if(this.props.data[0]){
-      active = this.props.data[0].toString() === "Start"
-    }
-
-    return (
-      <PlayerWrapper activated={active} color={this.props.color}>
+    const { color, playerNum } = this.props
+    return(
+      <PlayerWrapper activated={this.state.active} color={color}>
         <LabelWrapper>
-          <Typography size={40} color='white'>
-            {`P${this.props.playerNum}`}
+          <Typography size="6vw" color='white'>
+            {`P${playerNum}`}
           </Typography>
         </LabelWrapper>
-
       </PlayerWrapper>
     );
   }

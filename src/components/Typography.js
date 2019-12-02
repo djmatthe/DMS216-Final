@@ -4,9 +4,15 @@ import styled from 'styled-components'
 
 const Title = styled.div`
   font-family: Jumbo Regular;
-  font-size: ${({size}) => size}px;
+  ${({size}) => 
+    typeof(size) === "number"
+      ? `font-size: ${size}px;`
+      : `font-size: ${size};`
+  }
+
   color: ${({color}) => color};
   margin: auto;
+  text-align: center;
 `
 
 const Typography = ({children, size, color}) => {
