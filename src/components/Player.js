@@ -28,23 +28,24 @@ class Player extends Component {
     super(props)
     this.state = { active: false, messages: [] }
 
-    client.subscribe(`Player${this.props.playerNum}`, err => err && console.log(err))
-    client.on('message', listenToTopic(`Player${this.props.playerNum}`, this.onMessage))
+    client.subscribe(`Player${this.props.playerNum}/start`, err => err && console.log(err))
+    client.on('message', listenToTopic(`Player${this.props.playerNum}/start`, this.onMessage))
   }
 
   componentWillUnmount = () => {
-    client.unsubscribe(`Player${this.props.playerNum}`, err => err && console.log(err))
+    client.unsubscribe(`Player${this.props.playerNum}/start`, err => err && console.log(err))
   }
 
   onMessage = message => {
     this.setState({messages: [message, ...this.state.messages], })
-    if(message === "start"){
+    if(message === "true"){
       this.setState({active: true})
+      this.props.onActive(this.props.playerNum)
     }
   }
 
   render(){
-    const { color, playerNum } = this.props
+    const { color, playerNum, } = this.props
     return(
       <PlayerWrapper activated={this.state.active} color={color}>
         <LabelWrapper>

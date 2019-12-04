@@ -7,31 +7,69 @@ const TitleWrapper = styled.div`
     padding: 60px;
 `
 
+const LobbyWrapper = styled.div`
+    opacity: ${({active}) => active ? 1 : 0};
+    transition: opacity 1s ease;
+`
+
 const PlayerWrapper = styled.div`
     display: flex;
     align-items: stretch;
     justify-content: space-between;
 `
 
+const ContinueButton = styled.button`
+    opacity: ${({active}) => active ? 1 : 0};
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 10px;
+    margin: 80px auto;
+    padding: 10px;
+    transition: all 1s ease;
+`
+
+const ButtonWrapper = styled.div`
+    width: 100%;
+    display: flex;
+`
+
 class Lobby extends Component {
     constructor(props){
         super(props)
+        this.state = {p1: false, p2: false, p3: false, p4: false, ready: false, 
+            message: "Press the button on your armband to join the game!"}
+    }
+
+    onPlayerStart = num => {
+        this.setState({[`p${num}`]: true})
     }
 
     render() {
+
+        const { p1, p2, p3, p4} = this.state
+        const message = (p1 && p2 && p3 && p4) 
+            ? "Everyones In!" 
+            : "Press the button on your armband to join the game!"
+
         return (
-            <div>
+            <LobbyWrapper active={this.props.active}>
                 <TitleWrapper>
-                    <Typography size="7vw">Press the button on your armband to join the game!</Typography>
+                    <Typography size="7vw">{message}</Typography>
                 </TitleWrapper>
                     
                 <PlayerWrapper>
-                    <Player color="red" playerNum={1} />
-                    <Player color="blue" playerNum={2} />
-                    <Player color="green" playerNum={3} />
-                    <Player color="yellow" playerNum={4} />
+                    <Player color="red" playerNum={1} onActive={this.onPlayerStart}/>
+                    <Player color="blue" playerNum={2} onActive={this.onPlayerStart}/>
+                    <Player color="green" playerNum={3} onActive={this.onPlayerStart}/>
+                    <Player color="yellow" playerNum={4} onActive={this.onPlayerStart}/>
                 </PlayerWrapper>
-            </div>
+
+                <ButtonWrapper>
+                    <ContinueButton active={p1 && p2 && p3 && p4} onClick={this.props.onNextPage}>
+                        <Typography size="5vw">Continue!</Typography>
+                    </ContinueButton>  
+                </ButtonWrapper>
+            </LobbyWrapper>
         )
     }
 }
