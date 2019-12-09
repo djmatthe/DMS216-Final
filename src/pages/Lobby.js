@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Player, Typography } from '../components'
 
 import styled from 'styled-components'
+import { client } from '../index';
 
 const TitleWrapper = styled.div`
     padding: 60px;
@@ -40,8 +41,33 @@ class Lobby extends Component {
             message: "Press the button on your armband to join the game!"}
     }
 
-    onPlayerStart = num => {
+    onPlayerStart = (num, color) => {
         this.setState({[`p${num}`]: true})
+
+        console.log(color)
+
+        let colorCode;
+
+        switch(color) {
+            case "white":
+            default:
+                colorCode = 1
+                break;
+            case "red":
+                colorCode = 2 
+                break;
+            case "green":
+                colorCode = 3
+                break
+            case "blue":
+                colorCode = 4
+                break
+            case "yellow":
+                colorCode = 5
+                break
+        }
+
+        client.publish(`Player${num}/ledState`, colorCode.toString())
     }
 
     render() {

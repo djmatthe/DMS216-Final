@@ -40,7 +40,7 @@ class Player extends Component {
     this.setState({messages: [message, ...this.state.messages], })
     if(message === "true"){
       this.setState({active: true})
-      this.props.onActive(this.props.playerNum)
+      this.props.onActive(this.props.playerNum, this.props.color)
     }
   }
 

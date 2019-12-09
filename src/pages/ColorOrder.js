@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Typography } from '../components'
 import styled from 'styled-components'
 import { client } from '../index'
 import { listenToTopic } from '../helpers'
+import ColorOrderInstructions from './ColorOrderInstructions'
 
 const colors = ["red", "green", "blue", "yellow"]
 
@@ -13,8 +14,8 @@ const PageWrapper = styled.div`
 
 const ColorSequence = styled.div`
   margin: 2vw;
-  height: 50vw;
-  width: 50vw;
+  height: 35vw;
+  width: 35vw;
   border-radius: 50%;
   background-color: ${({color}) => color};
   opacity: ${({active}) => active ? 1 : 0};
@@ -41,7 +42,7 @@ class ColorOrder extends Component {
 
     constructor(props){
         super(props)
-        this.state = {currentColor: "black", cycling: false, messages: []}
+        this.state = {gameStarted: false, currentColor: "black", cycling: false, messages: []}
         this.sequence = shuffle(colors)
 
 
@@ -56,16 +57,17 @@ class ColorOrder extends Component {
 
     onMessage = message => {
         const allMessages = [message, ...this.state.messages]
-        const success = allMessages.length > 3 && JSON.stringify(this.sequence) == JSON.stringify(allMessages.slice(0, 4).reverse())
+        const recentGuess = allMessages.slice(0, 4).reverse()
+        const success = JSON.stringify(this.sequence) == JSON.stringify(recentGuess)
 
-        console.log(this.sequence)
-        console.log(allMessages.slice(0, 4).reverse())
+        console.log(message)
+        console.log(recentGuess)
 
         if(success){
             this.setState({victory: true})
         }
         
-        this.setState({messages: allMessages })
+        this.setState({messages: allMessages})
     }
 
     doColorSequence = () => {
@@ -89,27 +91,30 @@ class ColorOrder extends Component {
         }
     }
 
-
+    onGameStart = () => {
+        this.setState({gameStarted: true})
+    }
 
     render(){
         return (
             <PageWrapper active={this.props.active}>
-                
-                {this.state.victory
-                    ? <Typography size="7vw">Congratulations, you beat the puzzle!</Typography>
-                    : <ColorSequence color={this.state.currentColor} active={this.state.cycling}/>
+                {!this.state.gameStarted 
+                    ? <ColorOrderInstructions onGameStart={this.onGameStart}/>
+                    : 
+                    <Fragment>
+                        {this.state.victory
+                            ? <Typography size="7vw">Congratulations, you beat the puzzle!</Typography>
+                            : <ColorSequence color={this.state.currentColor} active={this.state.cycling}/>
+                        }
+                        <ButtonWrapper>
+                            <ContinueButton onClick={this.doColorSequence} active={!this.state.cycling}>
+                                <Typography size="5vw">
+                                    {this.state.victory ? "Next..." : "Show sequence..."}
+                                </Typography>
+                            </ContinueButton>  
+                        </ButtonWrapper>
+                    </Fragment>
                 }
-                
-                <ButtonWrapper>
-                    <ContinueButton onClick={this.doColorSequence} active={!this.state.cycling}>
-                        <Typography size="5vw">
-                            {this.state.victory 
-                                ? "Continue!"
-                                : "Click Me!"
-                            }
-                        </Typography>
-                    </ContinueButton>  
-                </ButtonWrapper>
             </PageWrapper>
         );
     }

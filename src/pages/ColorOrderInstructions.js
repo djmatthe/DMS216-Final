@@ -3,7 +3,7 @@ import { Player, Typography } from '../components';
 import styled from 'styled-components';
 
 const PageWrapper = styled.div`
-background-image: url("https://external-preview.redd.it/Dz7tyCzZrq64wLRyokb1l7o31a_imihGizhaeCv487U.png?auto=webp&s=697c055da98a0875756fe555965c9aa4c10bf00a");
+//background-image: url("https://external-preview.redd.it/Dz7tyCzZrq64wLRyokb1l7o31a_imihGizhaeCv487U.png?auto=webp&s=697c055da98a0875756fe555965c9aa4c10bf00a");
 height: 930px;
 //background-color: black;
 background-position: center;
@@ -54,9 +54,10 @@ componentDidMount() {
             </Typography>
           </TitleWrapper>
           <SubtitleWrapper>
-            <Typography size={38}>When you are ready to start, click the button to 
-              <ButtonWrapper>
-                <Typography size={38}> continue</Typography>
+            <Typography size={38}>
+              When you are ready to continue, click 
+              <ButtonWrapper onClick={this.props.onGameStart}>
+                <Typography size={38}>Start...</Typography>
               </ButtonWrapper>
             </Typography>
           </SubtitleWrapper> 
