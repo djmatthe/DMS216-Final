@@ -8,6 +8,7 @@
     "object.omit": "^3.0.0",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
+    "react-pose": "^4.0.10",
     "react-scripts": "3.2.0",
     "styled-components": "^4.4.1"
   },

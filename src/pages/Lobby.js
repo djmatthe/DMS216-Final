@@ -9,6 +9,7 @@ const Player3 = subscribe({topic: 'Player3'})(Player)
 const Player4 = subscribe({topic: 'Player4'})(Player)
 
 const TitleWrapper = styled.div`
+    text-align: center;
     padding: 60px;
 `
 
