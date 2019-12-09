@@ -8,7 +8,7 @@
 #define NEO_PIXEL_PIN 14
 #define BUTTON_PIN 12
 #define IR_SENSOR_PIN 13
-#define TILT_SENSOR_PIN 15
+#define TILT_SENSOR_PIN 2
 #define BUZZER_PIN 5
 #define SPEAKER_PIN 17
 #define IR_BLASTER_PIN 4
@@ -108,6 +108,15 @@ void setPixelPattern(int pattern) {
       break;
     case 2:
       r = 255, g = 0, b = 0;
+      break;
+    case 3:
+      r = 0, g = 255, b = 0;
+      break;
+    case 4:
+      r = 0, g = 0, b = 255;
+      break;
+    case 5:
+      r = 255, g = 255, b = 0;
       break;
     default:
       Serial.println("LED PATTERN NOT VALID. TURNING OFF!");

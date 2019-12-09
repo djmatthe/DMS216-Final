@@ -4,7 +4,7 @@
 #include <ArduinoJson.h>
 #include "sensor.h"
 
-#define PLAYER_NUM "Player4"
+#define PLAYER_NUM "Player3"
 
 #define LED_STATE_STR PLAYER_NUM "/ledState"
 #define IR_STATE_STR PLAYER_NUM "/irState"
@@ -92,6 +92,7 @@ void setup() {
 }
 
 void sendButtonPress() {
+  Serial.println("Testing 01");
   char outputBuffer[128];
   StaticJsonDocument<200> doc;
   doc["buttonState"] = getPushButtonPressed();
@@ -99,15 +100,19 @@ void sendButtonPress() {
   doc["irSensor"] = getMostRecentPressedRemote();
   serializeJson(doc, outputBuffer);
   test.publish(outputBuffer);
+  Serial.println("Testing 02");
 }
 
 void loop() {
   MQTT_connect();
-  sensorLoop();
-  sendButtonPress();
-  
-  mqtt.processPackets(10000);
-  if(!mqtt.ping()) {
+
+  for(int i = 0; i < 5000; i++) {
+      sensorLoop();
+      sendButtonPress();
+      mqtt.processPackets(500);
+  }
+
+  if (!mqtt.ping()) {
     mqtt.disconnect();
   }
 }
@@ -123,14 +128,14 @@ void MQTT_connect() {
 
   uint8_t retries = 3;
   while ((ret = mqtt.connect()) != 0) {
-       Serial.println(mqtt.connectErrorString(ret));
-       Serial.println("Retrying MQTT connection in 5 seconds...");
-       mqtt.disconnect();
-       delay(5000);
-       retries--;
-       if (retries == 0) {
-         while (1);
-       }
+    Serial.println(mqtt.connectErrorString(ret));
+    Serial.println("Retrying MQTT connection in 5 seconds...");
+    mqtt.disconnect();
+    delay(5000);
+    retries--;
+    if (retries == 0) {
+      while (1);
+    }
   }
 
   Serial.println("MQTT Connected!");
