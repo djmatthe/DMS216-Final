@@ -20,8 +20,8 @@ class App extends Component {
   render(){
     return (
       <Fragment>
-        {/*<Lobby active={this.state.lobby} onNextPage={this.afterLobby}/>*/}
-        <ColorOrder active={true} />
+        {this.state.lobby && <Lobby active={this.state.lobby} onNextPage={this.afterLobby}/>}
+        {this.state.colorOrder && <ColorOrder active={true} />}
       </Fragment>
     );
   }
